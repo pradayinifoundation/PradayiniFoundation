@@ -1387,6 +1387,29 @@ select:focus {
   border-color: #e9859d;
 }
 
+.home-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.2rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #f0c0ca;
+  background: linear-gradient(140deg, #d82027 0%, #ef4a73 100%);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(165, 17, 43, 0.28);
+}
+
+.home-fab:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 24px rgba(165, 17, 43, 0.34);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(14px);
