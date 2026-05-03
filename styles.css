@@ -955,6 +955,25 @@ h1 {
   color: #1f2740;
 }
 
+.scan-pay-block {
+  border: 2px solid #efc9d1;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #fff 0%, #fff6f8 100%);
+  padding: 0.85rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+}
+
+.scan-pay-block h4 {
+  margin: 0;
+  color: #2d0a83;
+  font-size: 1.75rem;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
 .upi-meta {
   border: 1px solid #efc9d1;
   background: #fff;
@@ -989,10 +1008,10 @@ h1 {
 }
 
 .upi-qr-wrap {
-  border: 1px solid #efc9d1;
-  border-radius: 0.55rem;
-  background: #fff;
-  padding: 0.7rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
   display: grid;
   justify-items: center;
   gap: 0.55rem;
@@ -1006,8 +1025,9 @@ h1 {
 }
 
 .upi-qr-wrap img {
-  width: 168px;
-  height: 168px;
+  width: min(260px, 100%);
+  height: auto;
+  aspect-ratio: 1;
   border-radius: 0.45rem;
   border: 1px solid #f0d8de;
   background: #fff;

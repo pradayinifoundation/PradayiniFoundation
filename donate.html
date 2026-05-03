@@ -72,7 +72,7 @@
           class="donation-form"
           data-razorpay-key="rzp_test_your_key_here"
           data-merchant-name="Pradayini Foundation"
-          data-upi-id="pradayinifoundation@okicici"
+          data-upi-id="pradayinifound.ation@sbi"
           data-upi-name="Pradayini Foundation"
           data-api-base="/.netlify/functions"
         >
@@ -105,6 +105,21 @@
             <label><input type="radio" name="paymentType" value="upi" /> UPI (Gateway)</label>
           </fieldset>
 
+          <div class="scan-pay-block">
+            <h4>SCAN & PAY</h4>
+            <div class="upi-qr-wrap" id="upiQrWrap">
+              <p>Scan to pay from any UPI app</p>
+              <img id="upiQrImage" alt="UPI QR code for donation" loading="lazy" />
+            </div>
+          </div>
+          <div class="upi-meta">
+            <p><strong>UPI ID:</strong> <span id="upiIdText">pradayinifound.ation@sbi</span></p>
+            <button type="button" class="copy-upi-btn" id="copyUpiBtn">Copy UPI ID</button>
+          </div>
+          <div class="upi-meta">
+            <p><strong>Bank A/C:</strong> 45015621508</p>
+            <p><strong>IFSC:</strong> SBIN0007808</p>
+          </div>
           <label>
             Full Name
             <input type="text" name="donorName" required />
@@ -117,20 +132,8 @@
             Phone
             <input type="tel" name="donorPhone" required />
           </label>
-          <div class="upi-meta">
-            <p><strong>UPI ID:</strong> <span id="upiIdText">pradayinifoundation@okicici</span></p>
-            <button type="button" class="copy-upi-btn" id="copyUpiBtn">Copy UPI ID</button>
-          </div>
-          <div class="upi-qr-wrap" id="upiQrWrap">
-            <p>Scan to pay from any UPI app</p>
-            <img id="upiQrImage" src="assets/upi-qr.png" data-static="true" alt="UPI QR code for donation" loading="lazy" />
-          </div>
-          <div class="upi-meta">
-            <p><strong>Bank A/C:</strong> 45015621508</p>
-            <p><strong>IFSC:</strong> SBIN0007808</p>
-          </div>
           <button type="submit" class="btn btn-light">Donate Now</button>
-          <a id="quickUpiLink" class="upi-link" href="upi://pay?pa=pradayinifoundation@okicici&pn=Pradayini%20Foundation&am=5000&cu=INR&tn=Donation-one-time">Quick UPI Link</a>
+          <a id="quickUpiLink" class="upi-link" href="upi://pay?pa=pradayinifound.ation@sbi&pn=Pradayini%20Foundation&am=5000&cu=INR&tn=Donation-one-time">Quick UPI Link</a>
           <p class="donation-note">Set your UPI ID using <code>data-upi-id</code>. Optional: set Razorpay key in <code>data-razorpay-key</code> for card/netbanking.</p>
           <p class="form-note" id="donationStatus" aria-live="polite"></p>
         </form>
