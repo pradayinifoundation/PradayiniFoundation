@@ -60,7 +60,9 @@ const updateQuickUpiLink = (amountValue, planValue = selectedPlan) => {
     upiIdText.textContent = upiReceiverId;
   }
   if (upiQrImage) {
-    upiQrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(upiLink)}`;
+    if (upiQrImage.dataset.static !== 'true') {
+      upiQrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(upiLink)}`;
+    }
   }
 };
 
