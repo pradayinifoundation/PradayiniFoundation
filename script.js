@@ -45,11 +45,20 @@ const upiReceiverName = donationForm?.dataset?.upiName?.trim() || 'Pradayini Fou
 const isLikelyMobile = () => /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || '');
 
 const buildUpiLink = (amountValue, planValue) => {
-  return `upi://pay?pa=${encodeURIComponent(upiReceiverId)}&pn=${encodeURIComponent(upiReceiverName)}&am=${encodeURIComponent(String(amountValue))}&cu=INR&tn=${encodeURIComponent(`Donation-${planValue}`)}`;
+  const params = [
+    `pa=${encodeURIComponent(upiReceiverId)}`,
+    `pn=${encodeURIComponent(upiReceiverName)}`,
+    'cu=INR',
+    `tn=${encodeURIComponent(`Donation-${planValue}`)}`,
+  ];
+  if (amountValue && amountValue >= 1) {
+    params.splice(2, 0, `am=${encodeURIComponent(String(amountValue))}`);
+  }
+  return `upi://pay?${params.join('&')}`;
 };
 
 const updateQuickUpiLink = (amountValue, planValue = selectedPlan) => {
-  if (!amountValue || amountValue < 1 || !upiReceiverId) {
+  if (!upiReceiverId) {
     return;
   }
   const upiLink = buildUpiLink(amountValue, planValue);
@@ -102,8 +111,12 @@ amountPills.forEach((pill) => {
     if (amountValue === 'custom') {
       setActiveAmountPill('custom');
       if (donationAmountInput) {
+        donationAmountInput.value = '';
         donationAmountInput.focus();
       }
+      selectedAmount = 0;
+      updateAmountImpact(0);
+      updateQuickUpiLink(0, selectedPlan);
       return;
     }
     selectedAmount = Number(amountValue);
