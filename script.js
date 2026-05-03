@@ -391,14 +391,24 @@ if (donationForm && donationStatus) {
               const verifyRes = await fetch(`${apiBase}/verify-payment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(response),
+                body: JSON.stringify({
+                  ...response,
+                  donorName,
+                  donorEmail,
+                  donorPhone,
+                  amount: finalAmount,
+                  plan: selectedPlan,
+                  paymentType,
+                }),
               });
               const verifyData = await verifyRes.json();
               if (!verifyRes.ok || !verifyData.verified) {
                 donationStatus.textContent = 'Payment received but verification failed. Please contact support.';
                 return;
               }
-              donationStatus.textContent = `Payment successful. Payment ID: ${response.razorpay_payment_id}`;
+              donationStatus.textContent = verifyData.sheetSaved
+                ? `Payment successful and donor details saved. Payment ID: ${response.razorpay_payment_id}`
+                : `Payment successful. Payment ID: ${response.razorpay_payment_id}`;
             } catch (error) {
               donationStatus.textContent = 'Payment completed, but verification could not be confirmed. Please contact support.';
             }
