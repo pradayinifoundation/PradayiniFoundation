@@ -660,6 +660,20 @@ h1 {
   gap: 0.8rem;
 }
 
+.gallery-preview-grid {
+  margin-bottom: 1.2rem;
+}
+
+.gallery-more {
+  display: flex;
+  justify-content: center;
+}
+
+.gallery-more .btn {
+  min-width: 12rem;
+  text-align: center;
+}
+
 .gallery-item {
   margin: 0;
   border: 1px solid var(--line);
