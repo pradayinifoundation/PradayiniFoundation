@@ -284,9 +284,9 @@ if (donationForm && donationStatus) {
   donationForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
+    const apiBase = donationForm.dataset.apiBase || '/.netlify/functions';
     const razorpayKey = donationForm.dataset.razorpayKey || '';
     const merchantName = donationForm.dataset.merchantName || 'Pradayini Foundation';
-    const hasRazorpayKey = razorpayKey && razorpayKey !== 'rzp_test_your_key_here';
     const donorName = donationForm.elements.donorName?.value?.trim() || '';
     const donorEmail = donationForm.elements.donorEmail?.value?.trim() || '';
     const donorPhone = donationForm.elements.donorPhone?.value?.trim() || '';
@@ -315,65 +315,90 @@ if (donationForm && donationStatus) {
       return;
     }
 
-    if (!hasRazorpayKey) {
-      if (upiReceiverId) {
-        const upiLink = buildUpiLink(finalAmount, selectedPlan);
-        if (isLikelyMobile()) {
-          window.location.href = upiLink;
-          donationStatus.textContent = 'Gateway key not set, opening UPI app directly.';
-        } else {
-          donationStatus.textContent = 'Gateway key not set. Scan QR or use Quick UPI Link for payment.';
-        }
-      } else {
-        donationStatus.textContent = 'Set Razorpay key or UPI ID to receive payments.';
-      }
-      return;
-    }
-
     if (typeof window.Razorpay === 'undefined') {
       donationStatus.textContent = 'Payment gateway failed to load. Check internet and try again.';
       return;
     }
 
-    let method;
-    if (paymentType === 'netbanking') {
-      method = { netbanking: true, card: false, upi: false, wallet: false };
-    } else if (paymentType === 'card') {
-      method = { netbanking: false, card: true, upi: false, wallet: false };
-    } else if (paymentType === 'upi') {
-      method = { netbanking: false, card: false, upi: true, wallet: false };
-    }
+    donationStatus.textContent = 'Preparing secure payment...';
 
-    const options = {
-      key: razorpayKey,
-      amount: Math.round(finalAmount * 100),
-      currency: 'INR',
-      name: merchantName,
-      description: `Donation (${selectedPlan})`,
-      image: 'assets/pradayini-logo.png',
-      prefill: {
-        name: donorName,
-        email: donorEmail,
-        contact: donorPhone,
-      },
-      notes: {
-        source: 'Website Donation',
+    fetch(`${apiBase}/create-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: finalAmount,
         plan: selectedPlan,
-      },
-      method,
-      theme: {
-        color: '#c7172f',
-      },
-      handler: (response) => {
-        donationStatus.textContent = `Payment successful. Payment ID: ${response.razorpay_payment_id}`;
-      },
-    };
+        donorName,
+        donorEmail,
+        donorPhone,
+      }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Unable to start payment');
+        }
+        return data;
+      })
+      .then((orderData) => {
+        let method;
+        if (paymentType === 'netbanking') {
+          method = { netbanking: true, card: false, upi: false, wallet: false };
+        } else if (paymentType === 'card') {
+          method = { netbanking: false, card: true, upi: false, wallet: false };
+        } else if (paymentType === 'upi') {
+          method = { netbanking: false, card: false, upi: true, wallet: false };
+        }
 
-    const razorpay = new window.Razorpay(options);
-    razorpay.on('payment.failed', (response) => {
-      const reason = response?.error?.description || 'Please try again.';
-      donationStatus.textContent = `Payment failed: ${reason}`;
-    });
-    razorpay.open();
+        const options = {
+          key: orderData.keyId || razorpayKey,
+          amount: orderData.amount,
+          currency: orderData.currency || 'INR',
+          name: merchantName,
+          description: `Donation (${selectedPlan})`,
+          image: 'assets/pradayini-logo.png',
+          order_id: orderData.orderId,
+          prefill: {
+            name: donorName,
+            email: donorEmail,
+            contact: donorPhone,
+          },
+          notes: {
+            source: 'Website Donation',
+            plan: selectedPlan,
+          },
+          method,
+          theme: {
+            color: '#c7172f',
+          },
+          handler: async (response) => {
+            try {
+              const verifyRes = await fetch(`${apiBase}/verify-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(response),
+              });
+              const verifyData = await verifyRes.json();
+              if (!verifyRes.ok || !verifyData.verified) {
+                donationStatus.textContent = 'Payment received but verification failed. Please contact support.';
+                return;
+              }
+              donationStatus.textContent = `Payment successful. Payment ID: ${response.razorpay_payment_id}`;
+            } catch (error) {
+              donationStatus.textContent = 'Payment completed, but verification could not be confirmed. Please contact support.';
+            }
+          },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.on('payment.failed', (response) => {
+          const reason = response?.error?.description || 'Please try again.';
+          donationStatus.textContent = `Payment failed: ${reason}`;
+        });
+        razorpay.open();
+      })
+      .catch((error) => {
+        donationStatus.textContent = error.message || 'Unable to start payment. Please try again.';
+      });
   });
 }
