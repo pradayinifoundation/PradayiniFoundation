@@ -15,6 +15,7 @@ const quickUpiLink = document.getElementById('quickUpiLink');
 const upiIdText = document.getElementById('upiIdText');
 const copyUpiBtn = document.getElementById('copyUpiBtn');
 const upiQrImage = document.getElementById('upiQrImage');
+const campaignNoticeClose = document.querySelector('.campaign-note-close');
 
 if (year) {
   year.textContent = new Date().getFullYear();
@@ -24,6 +25,12 @@ if (menuToggle && navLinks) {
   menuToggle.addEventListener('click', () => {
     const isOpen = navLinks.classList.toggle('open');
     menuToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+}
+
+if (campaignNoticeClose) {
+  campaignNoticeClose.addEventListener('click', () => {
+    campaignNoticeClose.closest('.campaign-note')?.remove();
   });
 }
 
