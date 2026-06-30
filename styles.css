@@ -1543,6 +1543,18 @@ select:focus {
   gap: 1rem;
 }
 
+.footer-address {
+  border-top: 1px solid var(--line);
+  padding: 0.95rem 0 0.4rem;
+}
+
+.footer-address p {
+  margin: 0;
+  color: var(--blue-deep);
+  font-weight: 600;
+  line-height: 1.7;
+}
+
 .social-last {
   border-top: 1px solid var(--line);
   padding-top: 0.9rem;
