@@ -54,11 +54,15 @@ a {
 
 .site-header {
   background: linear-gradient(180deg, #ffffff 0%, #fff5f6 100%);
+  padding-top: 100px;
 }
 
 .nav {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 50%;
+  width: min(1120px, 92%);
+  transform: translateX(-50%);
   z-index: 1200;
   min-height: 100px;
   display: flex;
@@ -67,6 +71,7 @@ a {
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(6px);
+  box-shadow: 0 10px 24px rgba(142, 16, 34, 0.08);
 }
 
 .brand {
