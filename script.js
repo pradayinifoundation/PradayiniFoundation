@@ -11,7 +11,6 @@ const amountPills = document.querySelectorAll('.amount-pill');
 const donationAmountInput = donationForm?.elements?.donationAmount;
 const frequencyPills = document.querySelectorAll('.frequency-pill');
 const amountImpact = document.getElementById('amountImpact');
-const quickUpiLink = document.getElementById('quickUpiLink');
 const upiIdText = document.getElementById('upiIdText');
 const copyUpiBtn = document.getElementById('copyUpiBtn');
 const upiQrImage = document.getElementById('upiQrImage');
@@ -89,9 +88,6 @@ const updateQuickUpiLink = (amountValue, planValue = selectedPlan) => {
     return;
   }
   const upiLink = buildUpiLink(amountValue, planValue);
-  if (quickUpiLink) {
-    quickUpiLink.href = upiLink;
-  }
   if (googlePayLink) {
     googlePayLink.href = buildPaymentAppLink('googlepay', amountValue, planValue);
   }
@@ -214,17 +210,9 @@ upiRouteButtons.forEach((button) => {
 });
 
 [googlePayLink, phonePeLink, otherUpiLink].filter(Boolean).forEach((link) => {
-  link.addEventListener('click', (event) => {
-    const amount = Number(donationAmountInput?.value || selectedAmount || 0);
-    if (!amount || amount < 1) {
-      event.preventDefault();
-      donationStatus.textContent = 'Enter your donation amount before opening a payment app.';
-      donationAmountInput?.focus();
-      return;
-    }
-    if (!isLikelyMobile()) {
-      event.preventDefault();
-      donationStatus.textContent = 'Open this option on a mobile phone to launch Google Pay or PhonePe. Use the custom QR on desktop.';
+  link.addEventListener('click', () => {
+    if (!isLikelyMobile() && donationStatus) {
+      donationStatus.textContent = 'This payment app opens on a mobile phone. On desktop, scan the Custom QR instead.';
     }
   });
 });
@@ -378,7 +366,6 @@ if (donationForm && donationStatus) {
   if (donationForm.elements.donationPlan?.value) {
     selectedPlan = donationForm.elements.donationPlan.value;
   }
-  updateQuickUpiLink(selectedAmount, selectedPlan);
   setUpiRoute(selectedUpiRoute);
   updatePaymentTypeView();
 
