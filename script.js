@@ -291,14 +291,17 @@ if (contactForm && formNote) {
 
     if (hasEndpoint) {
       try {
-        // no-cors mode keeps this compatible with simple Apps Script deployments
-        await fetch(sheetEndpoint, {
+        const isNetlifyEndpoint = sheetEndpoint.startsWith('/.netlify/functions/');
+        const response = await fetch(sheetEndpoint, {
           method: 'POST',
-          mode: 'no-cors',
+          mode: isNetlifyEndpoint ? 'same-origin' : 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload),
           keepalive: true,
         });
+        if (isNetlifyEndpoint && !response.ok) {
+          throw new Error('Contact save endpoint failed');
+        }
         return 'sheet';
       } catch (error) {
         // fall through to local backup

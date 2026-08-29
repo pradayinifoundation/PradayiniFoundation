@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { appendRow } = require('./google-sheets');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -70,6 +71,25 @@ exports.handler = async (event) => {
       };
     }
 
+    let sheetSaved = false;
+    try {
+      sheetSaved = await appendRow([
+        new Date().toISOString(),
+        donorName,
+        donorEmail,
+        donorPhone,
+        amount,
+        plan,
+        'order-created',
+        '',
+        orderData.id,
+        '',
+        'Initiated',
+      ]);
+    } catch (error) {
+      sheetSaved = false;
+    }
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -79,6 +99,7 @@ exports.handler = async (event) => {
         amount: orderData.amount,
         currency: orderData.currency,
         receipt: orderData.receipt,
+        sheetSaved,
       }),
     };
   } catch (error) {
