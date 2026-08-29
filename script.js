@@ -118,6 +118,20 @@ const updatePaymentTypeView = () => {
   }
 };
 
+const loadRazorpay = () => {
+  if (typeof window.Razorpay !== 'undefined') {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Razorpay checkout could not load.'));
+    document.head.appendChild(script);
+  });
+};
+
 const setUpiRoute = (route) => {
   selectedUpiRoute = route;
   upiRouteButtons.forEach((button) => {
@@ -369,7 +383,7 @@ if (donationForm && donationStatus) {
   setUpiRoute(selectedUpiRoute);
   updatePaymentTypeView();
 
-  donationForm.addEventListener('submit', (event) => {
+  donationForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const apiBase = donationForm.dataset.apiBase || '/.netlify/functions';
@@ -405,12 +419,14 @@ if (donationForm && donationStatus) {
       return;
     }
 
-    if (typeof window.Razorpay === 'undefined') {
+    donationStatus.textContent = 'Preparing secure payment...';
+
+    try {
+      await loadRazorpay();
+    } catch (error) {
       donationStatus.textContent = 'Payment gateway failed to load. Check internet and try again.';
       return;
     }
-
-    donationStatus.textContent = 'Preparing secure payment...';
 
     fetch(`${apiBase}/create-order`, {
       method: 'POST',
