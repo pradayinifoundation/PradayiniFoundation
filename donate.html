@@ -103,13 +103,12 @@
             <label><input type="radio" name="paymentType" value="upi_direct" checked /> UPI</label>
             <label><input type="radio" name="paymentType" value="netbanking" /> Internet Banking</label>
             <label><input type="radio" name="paymentType" value="card" /> Card</label>
-            <label><input type="radio" name="paymentType" value="upi" /> UPI (Gateway)</label>
           </fieldset>
 
           <div class="upi-payment-options" id="upiPaymentOptions">
             <div class="upi-route-toggle" role="tablist" aria-label="UPI payment method">
               <button type="button" class="upi-route-btn active" data-upi-route="qr" aria-selected="true">Custom QR</button>
-              <button type="button" class="upi-route-btn" data-upi-route="app" aria-selected="false">Open Payment App</button>
+              <button type="button" class="upi-route-btn" data-upi-route="app" aria-selected="false">Pay in an App</button>
             </div>
 
             <div class="scan-pay-block" id="upiQrPanel">
@@ -121,10 +120,11 @@
             </div>
 
             <div class="upi-app-panel" id="upiAppPanel" hidden>
-              <p>On your phone, choose the app you use. The amount will be filled automatically.</p>
+              <p>Choose an app on your phone. The amount is prefilled and can be edited before you confirm.</p>
               <div class="upi-app-actions">
                 <a id="googlePayLink" class="upi-app-btn google-pay" href="#">Open Google Pay</a>
                 <a id="phonePeLink" class="upi-app-btn phone-pe" href="#">Open PhonePe</a>
+                <a id="otherUpiLink" class="upi-app-btn other-upi" href="#">Other UPI App</a>
               </div>
             </div>
           </div>
@@ -137,7 +137,7 @@
             <p><strong>IFSC:</strong> SBIN0007808</p>
           </div>
           <p class="payment-gateway-note" id="paymentGatewayNote" hidden>
-            Internet Banking opens Razorpay's secure bank selection screen. Choose your bank there and complete the payment safely.
+            Internet Banking opens Razorpay's secure bank selection screen. Choose your bank, enter the requested banking details on your bank's page, and complete the payment safely.
           </p>
           <label>
             Full Name
@@ -153,7 +153,7 @@
           </label>
           <button type="submit" class="btn btn-light">Donate Now</button>
           <a id="quickUpiLink" class="upi-link" href="upi://pay?pa=pradayinifound.ation@sbi&pn=Pradayini%20Foundation&cu=INR&tn=Donation-one-time">Open any UPI app</a>
-          <p class="donation-note">Payments by Internet Banking, card, and gateway UPI are completed through Razorpay's secure checkout.</p>
+          <p class="donation-note">Payments by Internet Banking and card are completed through Razorpay's secure checkout.</p>
           <p class="form-note" id="donationStatus" aria-live="polite"></p>
         </form>
       </div>

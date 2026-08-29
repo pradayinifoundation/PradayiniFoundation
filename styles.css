@@ -1207,7 +1207,7 @@ h1 {
 
 .upi-app-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.55rem;
 }
 
@@ -1226,6 +1226,10 @@ h1 {
 
 .phone-pe {
   background: #5f259f;
+}
+
+.other-upi {
+  background: #16845b;
 }
 
 .upi-meta {
@@ -1850,6 +1854,10 @@ select:focus {
   }
 
   .donate-highlights {
+    grid-template-columns: 1fr;
+  }
+
+  .upi-app-actions {
     grid-template-columns: 1fr;
   }
 }

@@ -21,6 +21,7 @@ const upiAppPanel = document.getElementById('upiAppPanel');
 const upiPaymentOptions = document.getElementById('upiPaymentOptions');
 const googlePayLink = document.getElementById('googlePayLink');
 const phonePeLink = document.getElementById('phonePeLink');
+const otherUpiLink = document.getElementById('otherUpiLink');
 const paymentGatewayNote = document.getElementById('paymentGatewayNote');
 const campaignNoticeClose = document.querySelector('.campaign-note-close');
 
@@ -96,6 +97,9 @@ const updateQuickUpiLink = (amountValue, planValue = selectedPlan) => {
   }
   if (phonePeLink) {
     phonePeLink.href = buildPaymentAppLink('phonepe', amountValue, planValue);
+  }
+  if (otherUpiLink) {
+    otherUpiLink.href = upiLink;
   }
   if (upiIdText) {
     upiIdText.textContent = upiReceiverId;
@@ -209,7 +213,7 @@ upiRouteButtons.forEach((button) => {
   button.addEventListener('click', () => setUpiRoute(button.dataset.upiRoute || 'qr'));
 });
 
-[googlePayLink, phonePeLink].filter(Boolean).forEach((link) => {
+[googlePayLink, phonePeLink, otherUpiLink].filter(Boolean).forEach((link) => {
   link.addEventListener('click', (event) => {
     const amount = Number(donationAmountInput?.value || selectedAmount || 0);
     if (!amount || amount < 1) {
@@ -404,7 +408,7 @@ if (donationForm && donationStatus) {
     if (paymentType === 'upi_direct') {
       const upiLink = buildUpiLink(finalAmount, selectedPlan);
       if (selectedUpiRoute === 'app') {
-        donationStatus.textContent = 'Choose Google Pay or PhonePe above to continue with your preferred payment app.';
+        donationStatus.textContent = 'Choose Google Pay, PhonePe, or Other UPI App above to continue.';
       } else if (isLikelyMobile()) {
         window.location.href = upiLink;
         donationStatus.textContent = 'Opening your UPI app. Complete the payment there.';
@@ -445,8 +449,6 @@ if (donationForm && donationStatus) {
           method = { netbanking: true, card: false, upi: false, wallet: false };
         } else if (paymentType === 'card') {
           method = { netbanking: false, card: true, upi: false, wallet: false };
-        } else if (paymentType === 'upi') {
-          method = { netbanking: false, card: false, upi: true, wallet: false };
         }
 
         const options = {
