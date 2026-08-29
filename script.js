@@ -15,6 +15,13 @@ const quickUpiLink = document.getElementById('quickUpiLink');
 const upiIdText = document.getElementById('upiIdText');
 const copyUpiBtn = document.getElementById('copyUpiBtn');
 const upiQrImage = document.getElementById('upiQrImage');
+const upiRouteButtons = document.querySelectorAll('.upi-route-btn');
+const upiQrPanel = document.getElementById('upiQrPanel');
+const upiAppPanel = document.getElementById('upiAppPanel');
+const upiPaymentOptions = document.getElementById('upiPaymentOptions');
+const googlePayLink = document.getElementById('googlePayLink');
+const phonePeLink = document.getElementById('phonePeLink');
+const paymentGatewayNote = document.getElementById('paymentGatewayNote');
 const campaignNoticeClose = document.querySelector('.campaign-note-close');
 
 if (year) {
@@ -45,8 +52,9 @@ dropTriggers.forEach((trigger) => {
   });
 });
 
-let selectedAmount = 5000;
+let selectedAmount = 0;
 let selectedPlan = 'one-time';
+let selectedUpiRoute = 'qr';
 const upiReceiverId = donationForm?.dataset?.upiId?.trim() || '';
 const upiReceiverName = donationForm?.dataset?.upiName?.trim() || 'Pradayini Foundation';
 const isLikelyMobile = () => /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || '');
@@ -64,6 +72,17 @@ const buildUpiLink = (amountValue, planValue) => {
   return `upi://pay?${params.join('&')}`;
 };
 
+const buildPaymentAppLink = (app, amountValue, planValue) => {
+  const universalParams = buildUpiLink(amountValue, planValue).split('?')[1];
+  if (app === 'googlepay') {
+    return `tez://upi/pay?${universalParams}`;
+  }
+  if (app === 'phonepe') {
+    return `phonepe://pay?${universalParams}`;
+  }
+  return buildUpiLink(amountValue, planValue);
+};
+
 const updateQuickUpiLink = (amountValue, planValue = selectedPlan) => {
   if (!upiReceiverId) {
     return;
@@ -72,6 +91,12 @@ const updateQuickUpiLink = (amountValue, planValue = selectedPlan) => {
   if (quickUpiLink) {
     quickUpiLink.href = upiLink;
   }
+  if (googlePayLink) {
+    googlePayLink.href = buildPaymentAppLink('googlepay', amountValue, planValue);
+  }
+  if (phonePeLink) {
+    phonePeLink.href = buildPaymentAppLink('phonepe', amountValue, planValue);
+  }
   if (upiIdText) {
     upiIdText.textContent = upiReceiverId;
   }
@@ -79,6 +104,32 @@ const updateQuickUpiLink = (amountValue, planValue = selectedPlan) => {
     if (upiQrImage.dataset.static !== 'true') {
       upiQrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(upiLink)}`;
     }
+  }
+};
+
+const updatePaymentTypeView = () => {
+  const paymentType = donationForm?.elements?.paymentType?.value || 'upi_direct';
+  const isDirectUpi = paymentType === 'upi_direct';
+  if (upiPaymentOptions) {
+    upiPaymentOptions.hidden = !isDirectUpi;
+  }
+  if (paymentGatewayNote) {
+    paymentGatewayNote.hidden = paymentType !== 'netbanking';
+  }
+};
+
+const setUpiRoute = (route) => {
+  selectedUpiRoute = route;
+  upiRouteButtons.forEach((button) => {
+    const isActive = button.dataset.upiRoute === route;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-selected', String(isActive));
+  });
+  if (upiQrPanel) {
+    upiQrPanel.hidden = route !== 'qr';
+  }
+  if (upiAppPanel) {
+    upiAppPanel.hidden = route !== 'app';
   }
 };
 
@@ -137,12 +188,8 @@ amountPills.forEach((pill) => {
 });
 
 if (donationAmountInput) {
-  const initialAmount = Number(donationAmountInput.value || selectedAmount);
-  if (initialAmount > 0) {
-    selectedAmount = initialAmount;
-  }
-  donationAmountInput.value = String(selectedAmount);
-  setActiveAmountPill(String(selectedAmount));
+  donationAmountInput.value = '';
+  setActiveAmountPill('custom');
   updateAmountImpact(selectedAmount);
   updateQuickUpiLink(selectedAmount, selectedPlan);
   donationAmountInput.addEventListener('input', () => {
@@ -155,6 +202,32 @@ if (donationAmountInput) {
       setActiveAmountPill('custom');
     }
     updateQuickUpiLink(typedAmount, selectedPlan);
+  });
+}
+
+upiRouteButtons.forEach((button) => {
+  button.addEventListener('click', () => setUpiRoute(button.dataset.upiRoute || 'qr'));
+});
+
+[googlePayLink, phonePeLink].filter(Boolean).forEach((link) => {
+  link.addEventListener('click', (event) => {
+    const amount = Number(donationAmountInput?.value || selectedAmount || 0);
+    if (!amount || amount < 1) {
+      event.preventDefault();
+      donationStatus.textContent = 'Enter your donation amount before opening a payment app.';
+      donationAmountInput?.focus();
+      return;
+    }
+    if (!isLikelyMobile()) {
+      event.preventDefault();
+      donationStatus.textContent = 'Open this option on a mobile phone to launch Google Pay or PhonePe. Use the custom QR on desktop.';
+    }
+  });
+});
+
+if (donationForm?.elements?.paymentType) {
+  donationForm.elements.paymentType.forEach((option) => {
+    option.addEventListener('change', updatePaymentTypeView);
   });
 }
 
@@ -302,6 +375,8 @@ if (donationForm && donationStatus) {
     selectedPlan = donationForm.elements.donationPlan.value;
   }
   updateQuickUpiLink(selectedAmount, selectedPlan);
+  setUpiRoute(selectedUpiRoute);
+  updatePaymentTypeView();
 
   donationForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -328,11 +403,13 @@ if (donationForm && donationStatus) {
 
     if (paymentType === 'upi_direct') {
       const upiLink = buildUpiLink(finalAmount, selectedPlan);
-      if (isLikelyMobile()) {
+      if (selectedUpiRoute === 'app') {
+        donationStatus.textContent = 'Choose Google Pay or PhonePe above to continue with your preferred payment app.';
+      } else if (isLikelyMobile()) {
         window.location.href = upiLink;
-        donationStatus.textContent = 'Opening UPI app. Complete the payment and submit screenshot if needed.';
+        donationStatus.textContent = 'Opening your UPI app. Complete the payment there.';
       } else {
-        donationStatus.textContent = 'Use your mobile UPI app to scan the QR code and complete payment.';
+        donationStatus.textContent = 'Scan the custom QR code using any UPI app to complete payment.';
       }
       return;
     }

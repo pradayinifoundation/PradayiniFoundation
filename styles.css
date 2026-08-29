@@ -1141,6 +1141,37 @@ h1 {
   color: #1f2740;
 }
 
+.upi-payment-options {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.upi-route-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 0.45rem;
+  padding: 0.3rem;
+  background: #f9e7eb;
+  border-radius: 0.7rem;
+}
+
+.upi-route-btn {
+  border: 0;
+  border-radius: 0.48rem;
+  background: transparent;
+  color: #8e1330;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 0.65rem 0.5rem;
+}
+
+.upi-route-btn.active {
+  background: #fff;
+  box-shadow: 0 2px 9px rgba(125, 12, 39, 0.12);
+  color: #b20d2d;
+}
+
 .scan-pay-block {
   border: 2px solid #efc9d1;
   border-radius: 0.75rem;
@@ -1158,6 +1189,43 @@ h1 {
   line-height: 1;
   font-weight: 900;
   letter-spacing: 0.04em;
+}
+
+.upi-app-panel {
+  border: 2px solid #efc9d1;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #fff 0%, #fff6f8 100%);
+  padding: 1rem;
+}
+
+.upi-app-panel p {
+  margin: 0 0 0.8rem;
+  color: #4f5878;
+  font-weight: 700;
+  text-align: center;
+}
+
+.upi-app-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.upi-app-btn {
+  border-radius: 0.5rem;
+  color: #fff;
+  font-weight: 800;
+  padding: 0.72rem 0.55rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.google-pay {
+  background: #2161d4;
+}
+
+.phone-pe {
+  background: #5f259f;
 }
 
 .upi-meta {
@@ -1236,6 +1304,17 @@ h1 {
   margin: 0;
   font-size: 0.88rem;
   color: #626b87;
+}
+
+.payment-gateway-note {
+  margin: 0;
+  border-left: 4px solid #c7172f;
+  background: #fff4f5;
+  color: #672033;
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.5;
+  padding: 0.65rem 0.75rem;
 }
 
 .btn-light {

@@ -87,30 +87,45 @@
           <label>
             A sum of INR
             <div class="donate-amounts">
-              <button type="button" class="amount-pill active" data-amount="5000">₹5000</button>
+              <button type="button" class="amount-pill" data-amount="5000">₹5000</button>
               <button type="button" class="amount-pill" data-amount="10000">₹10000</button>
-              <button type="button" class="amount-pill" data-amount="custom">Custom</button>
+              <button type="button" class="amount-pill active" data-amount="custom">Custom</button>
             </div>
           </label>
           <label class="donation-amount-wrap">
             Enter Amount (INR)
-            <input type="number" name="donationAmount" min="1" value="5000" placeholder="Enter amount" required />
+            <input type="number" name="donationAmount" min="1" placeholder="Enter your donation amount" required />
           </label>
-          <p class="amount-impact" id="amountImpact">Can support one complete village-level menstrual hygiene awareness drive.</p>
+          <p class="amount-impact" id="amountImpact">Enter an amount to see the possible impact of your contribution.</p>
 
           <fieldset class="payment-type">
             <legend>Payment Type</legend>
-            <label><input type="radio" name="paymentType" value="upi_direct" checked /> UPI App (Recommended)</label>
-            <label><input type="radio" name="paymentType" value="netbanking" /> Netbanking</label>
+            <label><input type="radio" name="paymentType" value="upi_direct" checked /> UPI</label>
+            <label><input type="radio" name="paymentType" value="netbanking" /> Internet Banking</label>
             <label><input type="radio" name="paymentType" value="card" /> Card</label>
             <label><input type="radio" name="paymentType" value="upi" /> UPI (Gateway)</label>
           </fieldset>
 
-          <div class="scan-pay-block">
-            <h4>SCAN & PAY</h4>
-            <div class="upi-qr-wrap" id="upiQrWrap">
-              <p>Scan to pay from any UPI app</p>
-              <img id="upiQrImage" alt="UPI QR code for donation" loading="lazy" />
+          <div class="upi-payment-options" id="upiPaymentOptions">
+            <div class="upi-route-toggle" role="tablist" aria-label="UPI payment method">
+              <button type="button" class="upi-route-btn active" data-upi-route="qr" aria-selected="true">Custom QR</button>
+              <button type="button" class="upi-route-btn" data-upi-route="app" aria-selected="false">Open Payment App</button>
+            </div>
+
+            <div class="scan-pay-block" id="upiQrPanel">
+              <h4>SCAN & PAY</h4>
+              <div class="upi-qr-wrap" id="upiQrWrap">
+                <p>Scan this QR from any UPI app. It updates with your amount.</p>
+                <img id="upiQrImage" alt="Custom UPI QR code for donation" loading="lazy" />
+              </div>
+            </div>
+
+            <div class="upi-app-panel" id="upiAppPanel" hidden>
+              <p>On your phone, choose the app you use. The amount will be filled automatically.</p>
+              <div class="upi-app-actions">
+                <a id="googlePayLink" class="upi-app-btn google-pay" href="#">Open Google Pay</a>
+                <a id="phonePeLink" class="upi-app-btn phone-pe" href="#">Open PhonePe</a>
+              </div>
             </div>
           </div>
           <div class="upi-meta">
@@ -121,6 +136,9 @@
             <p><strong>Bank A/C:</strong> 45015621508</p>
             <p><strong>IFSC:</strong> SBIN0007808</p>
           </div>
+          <p class="payment-gateway-note" id="paymentGatewayNote" hidden>
+            Internet Banking opens Razorpay's secure bank selection screen. Choose your bank there and complete the payment safely.
+          </p>
           <label>
             Full Name
             <input type="text" name="donorName" required />
@@ -134,8 +152,8 @@
             <input type="tel" name="donorPhone" required />
           </label>
           <button type="submit" class="btn btn-light">Donate Now</button>
-          <a id="quickUpiLink" class="upi-link" href="upi://pay?pa=pradayinifound.ation@sbi&pn=Pradayini%20Foundation&am=5000&cu=INR&tn=Donation-one-time">Quick UPI Link</a>
-          <p class="donation-note">Set your UPI ID using <code>data-upi-id</code>. Optional: set Razorpay key in <code>data-razorpay-key</code> for card/netbanking.</p>
+          <a id="quickUpiLink" class="upi-link" href="upi://pay?pa=pradayinifound.ation@sbi&pn=Pradayini%20Foundation&cu=INR&tn=Donation-one-time">Open any UPI app</a>
+          <p class="donation-note">Payments by Internet Banking, card, and gateway UPI are completed through Razorpay's secure checkout.</p>
           <p class="form-note" id="donationStatus" aria-live="polite"></p>
         </form>
       </div>
